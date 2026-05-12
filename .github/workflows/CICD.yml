@@ -22,17 +22,17 @@ jobs:
 
     # 3. Restore dependencies
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore WebAppBuild.slnx
 
     # 4. Build
     - name: Build solution
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build WebAppBuild.slnx --configuration Release --no-restore
 
-    # 6. Publish
+    # 5. Publish
     - name: Publish app
-      run: dotnet publish -c Release -o publish
+      run: dotnet publish WebAppBuild.slnx -c Release -o publish --no-build
 
-    # 7. Upload artifact
+    # 6. Upload artifact
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
