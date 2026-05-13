@@ -5,39 +5,36 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-deploy:
+  build-test-publish:
 
-    runs-on: self-hosted
+    runs-on: windows-latest
 
     steps:
+    # 1. Checkout code
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    # 2. Setup .NET
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.x
 
+    # 3. Restore dependencies
     - name: Restore dependencies
       run: dotnet restore WebAppBuild/WebAppBuild.slnx
 
+    # 4. Build
     - name: Build solution
       run: dotnet build WebAppBuild/WebAppBuild.slnx --configuration Release --no-restore
 
+    # 5. Publish
     - name: Publish app
       run: dotnet publish WebAppBuild/WebAppBuild.slnx -c Release -o publish --no-build
 
-    # STOP IIS (optional but recommended if using IIS)
-    - name: Stop IIS site
-      run: |
-        iisreset /stop
-
-    # Deploy files
-    - name: Deploy to server folder
-      run: |
-        xcopy publish C:\Deploy\WebAppBuild /E /H /C /I /Y
-
-    # START IIS again
-    - name: Start IIS site
-      run: |
-        iisreset /start
+    # 6. Upload artifact
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dotnet-app
+        path: publish
