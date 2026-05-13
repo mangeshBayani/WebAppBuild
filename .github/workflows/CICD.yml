@@ -32,9 +32,13 @@ jobs:
     - name: Publish app
       run: dotnet publish WebAppBuild/WebAppBuild.slnx -c Release -o publish --no-build
 
-    # 6. Upload artifact
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: dotnet-app
-        path: publish
+    # 6. Deploy directly
+    - name: Deploy to IIS
+      run: |
+        Copy-Item -Path publish\* -Destination "D:\Deploy\WebAppBuild" -Recurse -Force
+    
+    # 7. Restart IIS App Pool
+    - name: Restart IIS App Pool
+      run: |
+        Import-Module WebAdministration
+        Restart-WebAppPool -Name "DefaultAppPool"
