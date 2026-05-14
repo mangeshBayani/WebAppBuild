@@ -33,10 +33,10 @@ jobs:
         Import-Module WebAdministration
         Stop-Website -Name "WebAppBuild"
 
-    - name: Deploy
+    - name: Deploy to IIS
       shell: powershell
       run: |
-        robocopy .\publish C:\inetpub\WebAppBuild /MIR
+        robocopy "${{ github.workspace }}\publish" "C:\inetpub\WebAppBuild" /MIR
         if ($LASTEXITCODE -le 3) { exit 0 } else { exit $LASTEXITCODE }
 
     - name: Start IIS
