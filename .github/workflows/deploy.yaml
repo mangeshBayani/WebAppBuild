@@ -1,1 +1,46 @@
+name: Deploy WebAppBuild to IIS
 
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build -c Release --no-restore
+
+    - name: Publish
+      run: dotnet publish -c Release -o publish
+
+    - name: Stop IIS
+      shell: powershell
+      run: |
+        Import-Module WebAdministration
+        Stop-Website -Name "WebAppBuild"
+
+    - name: Deploy
+      shell: powershell
+      run: |
+        robocopy .\publish C:\inetpub\WebAppBuild /MIR
+        if ($LASTEXITCODE -le 3) { exit 0 } else { exit $LASTEXITCODE }
+
+    - name: Start IIS
+      shell: powershell
+      run: |
+        Import-Module WebAdministration
+        Start-Website -Name "WebAppBuild"
