@@ -3,7 +3,7 @@ name: .NET CI-CD Pipeline
 on:
   push:
     branches: [ "main" ]
- 
+
 jobs:
   build-test-publish:
     runs-on: self-hosted
