@@ -29,7 +29,7 @@ jobs:
     - name: Stop IIS App Pool
       shell: powershell
       run: |
-        Import-Module WebAdministration -SkipEditionCheck
+        Import-Module WebAdministration
         Stop-WebAppPool -Name "DefaultAppPool"
 
     - name: Prepare deployment folder
@@ -47,5 +47,5 @@ jobs:
     - name: Start IIS App Pool
       shell: powershell
       run: |
-        Import-Module WebAdministration -SkipEditionCheck
+        Import-Module WebAdministration
         Start-WebAppPool -Name "DefaultAppPool"
